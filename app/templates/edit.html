@@ -54,8 +54,8 @@
         <div class="col-md-6 mb-3">
           <label class="form-label">Cache TTL（秒）</label>
           <input type="number" class="form-control" name="cache_ttl" min="1"
-                 value="{{ sub.cache_ttl if sub and sub.cache_ttl else '' }}" placeholder="1800">
-          <div class="form-text">缓存有效期，留空用全局默认 1800 秒。</div>
+                 value="{{ sub.cache_ttl if sub and sub.cache_ttl else '' }}" placeholder="180">
+          <div class="form-text">缓存有效期，留空用全局默认 180 秒。</div>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">User-Agent 模式</label>

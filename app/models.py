@@ -47,9 +47,9 @@ class ServerConfig(BaseModel):
 
 
 class DefaultsConfig(BaseModel):
-    cache_ttl: int = Field(default=1800, gt=0)
-    connect_timeout: float = Field(default=5.0, gt=0, le=120)
-    read_timeout: float = Field(default=15.0, gt=0, le=300)
+    cache_ttl: int = Field(default=180, gt=0)
+    connect_timeout: float = Field(default=10.0, gt=0, le=120)
+    read_timeout: float = Field(default=60.0, gt=0, le=300)
     max_response_size: int = Field(default=5 * 1024 * 1024, gt=0)
     user_agent_mode: str = "passthrough"
     user_agent: str = "SubscriptionRelay/0.1.0"

@@ -17,9 +17,9 @@ server:
   allow_private_networks: false
 
 defaults:
-  cache_ttl: 1800
-  connect_timeout: 5.0
-  read_timeout: 15.0
+  cache_ttl: 180
+  connect_timeout: 10.0
+  read_timeout: 60.0
   max_response_size: 5242880
   user_agent_mode: 'passthrough'
   user_agent: 'SubscriptionRelay/0.1.0'
@@ -31,7 +31,7 @@ defaults:
 #     enabled: true
 #     source_url: 'https://provider-a.example.com/api/subscribe?token=xxxxx'
 #     access_token: '8LxK2pqN7MWa'
-#     cache_ttl: 1800
+#     cache_ttl: 180
 #     user_agent_mode: 'fixed'
 #     user_agent: 'clash'
 subscriptions: []
