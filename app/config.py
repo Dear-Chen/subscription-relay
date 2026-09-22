@@ -40,13 +40,14 @@ class ConfigManager:
     # ------------------------------------------------------------------ load
     def load(self) -> AppConfig:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        if not self.path.exists():
-            logger.info("config file not found, creating default: %s", self.path)
-            self._config = AppConfig()
-            self._atomic_write(self._config)
-            return self._config
+        text: str | None = None
+        if self.path.exists():
+            text = self.path.read_text(encoding="utf-8")
+        if not text or not text.strip():
+            logger.info("config empty, creating from template: %s", self.path)
+            text = self._initial_config_text()
         try:
-            raw = yaml.safe_load(self.path.read_text(encoding="utf-8"))
+            raw = yaml.safe_load(text)
         except yaml.YAMLError as exc:
             raise ConfigError(f"config.yaml 解析失败: {exc}") from exc
         if raw is None:
@@ -57,6 +58,20 @@ class ConfigManager:
             raise ConfigError(f"config.yaml 校验失败: {exc}") from exc
         logger.info("config loaded: %d subscription(s)", len(self._config.subscriptions))
         return self._config
+
+    def _initial_config_text(self) -> str:
+        """First-run config: copy the shipped template when available."""
+        example = self.path.parent / "config.example.yaml"
+        if example.exists():
+            content = example.read_text(encoding="utf-8")
+            self._atomic_write_text(self.path, content)
+            return content
+        config = AppConfig()
+        payload = yaml.safe_dump(
+            config.model_dump(), allow_unicode=True, sort_keys=False
+        )
+        self._atomic_write_text(self.path, payload)
+        return payload
 
     @property
     def config(self) -> AppConfig:
@@ -73,14 +88,18 @@ class ConfigManager:
         payload = yaml.safe_dump(
             config.model_dump(), allow_unicode=True, sort_keys=False
         )
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        fd, tmp_name = tempfile.mkstemp(dir=self.path.parent, suffix=".tmp")
+        self._atomic_write_text(self.path, payload)
+
+    @staticmethod
+    def _atomic_write_text(path: Path, payload: str) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp_name = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 fh.write(payload)
                 fh.flush()
                 os.fsync(fh.fileno())
-            os.replace(tmp_name, self.path)
+            os.replace(tmp_name, path)
         except BaseException:
             try:
                 os.unlink(tmp_name)

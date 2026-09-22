@@ -64,10 +64,13 @@ git push origin v0.1.0
 
 ## 首次启动
 
-- 默认登录账号密码为 `admin` / `admin`（来自 `config.yaml` 的 `server.admin_password` 明文字段，该字段优先于 `admin_password_hash`，启动时仅在内存中计算 bcrypt 哈希）
+- 数据目录中没有 `config.yaml`（或文件为空）时，自动从 `data/config.example.yaml` 模板复制一份，默认登录账号密码为 `admin` / `admin`
+- 若 `config.yaml` 已有内容：`server.admin_password` 明文密码优先于 `admin_password_hash`，启动时仅在内存中计算 bcrypt 哈希
 - 若 `admin_password` 与 `admin_password_hash` 均为空：读取环境变量 `SUBRELAY_ADMIN_PASSWORD`，若也未设置则生成随机密码并打印到日志
 - `session_secret` 为空时自动生成并写回
 - 登录后访问管理后台 `/admin`
+
+容器以 root 启动仅用于修正数据目录（bind mount）权限，随后通过 gosu 降权为无特权的 `subrelay` 用户运行。
 
 ## 配置说明
 
