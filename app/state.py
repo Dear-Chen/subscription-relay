@@ -64,6 +64,7 @@ class StateStore:
     async def record_success(self, sub_id: str) -> None:
         state = self._states.setdefault(sub_id, SubState())
         state.last_success_at = _now_iso()
+        state.last_error = None  # 恢复后清掉错误信息；最后失败时间保留作历史
         await self._save()
 
     async def record_failure(self, sub_id: str, error: str) -> None:
