@@ -70,7 +70,7 @@ git push origin v0.1.0
 - `session_secret` 为空时自动生成并写回
 - 登录后访问管理后台 `/admin`
 
-容器以 root 启动仅用于修正数据目录（bind mount）权限，随后通过 gosu 降权为无特权的 `subrelay` 用户运行。
+数据目录通过 `-v ./data:/app/data` 挂载时，容器内直接以 root 读写，无需关心属主问题。
 
 ## 配置说明
 
