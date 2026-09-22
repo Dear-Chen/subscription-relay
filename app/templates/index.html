@@ -16,6 +16,14 @@
     <a href="/admin/subscriptions/new" class="btn btn-primary btn-sm px-3">＋ 新增订阅</a>
   </div>
 
+  {% if not public_base_url %}
+  <div class="alert alert-warning small py-2">
+    未配置 <span class="mono">server.public_base_url</span>：当前中转地址按访问时的协议生成。
+    若服务位于 HTTPS 反向代理/隧道之后，请在 <span class="mono">data/config.yaml</span> 中将其设为
+    <span class="mono">https://</span> 开头的地址并重启，否则复制出的地址可能无法直接使用。
+  </div>
+  {% endif %}
+
   {% if not subs %}
   <div class="sub-card text-center text-muted py-5">
     还没有订阅，点击右上角「＋ 新增订阅」开始。

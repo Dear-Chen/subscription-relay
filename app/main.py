@@ -215,7 +215,14 @@ async def admin_index(request: Request):
         return RedirectResponse(url="/admin/login", status_code=303)
     cfg = _cfg(request)
     views = [_sub_view(request, s) for s in cfg.config.subscriptions]
-    return _page(request, "index.html", {"subs": views})
+    return _page(
+        request,
+        "index.html",
+        {
+            "subs": views,
+            "public_base_url": cfg.config.server.public_base_url,
+        },
+    )
 
 
 @app.get("/admin/subscriptions/new", response_class=HTMLResponse)
