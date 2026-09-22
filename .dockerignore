@@ -1,0 +1,21 @@
+.git
+.venv
+venv
+env
+__pycache__
+*.pyc
+.pytest_cache
+.idea
+.vscode
+*.iml
+
+# 运行数据：密钥与缓存不进镜像（配置参考 data/config.example.yaml）
+data/config.yaml
+data/state.yaml
+data/cache/*
+!data/cache/.gitkeep
+
+docker-compose.yml
+Dockerfile
+README.md
+.github

@@ -1,0 +1,9 @@
+services:
+  subscription-relay:
+    build: .
+    container_name: subscription-relay
+    restart: unless-stopped
+    ports:
+      - "11543:8080"
+    volumes:
+      - ./data:/app/data

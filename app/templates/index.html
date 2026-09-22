@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}订阅管理 - Subscription Relay{% endblock %}
+{% block body %}
+<nav class="topbar">
+  <div class="container-narrow topbar-inner">
+    <span class="topbar-brand"><span class="brand-mark">📡</span>Subscription Relay</span>
+    <form method="post" action="/admin/logout" class="m-0">
+      <button type="submit" class="btn btn-soft btn-sm">退出 · {{ admin_username }}</button>
+    </form>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <div class="page-head">
+    <h1 class="page-title">订阅列表</h1>
+    <a href="/admin/subscriptions/new" class="btn btn-primary btn-sm px-3">＋ 新增订阅</a>
+  </div>
+
+  {% if not subs %}
+  <div class="sub-card text-center text-muted py-5">
+    还没有订阅，点击右上角「＋ 新增订阅」开始。
+  </div>
+  {% endif %}
+
+  {% for sub in subs %}
+  <div class="sub-card" id="card-{{ sub.id }}"
+       data-id="{{ sub.id }}"
+       data-relay-url="{{ sub.relay_url|e }}"
+       data-source-full="{{ sub.source_url|e }}">
+    <div class="sub-head">
+      <div class="sub-name">{{ sub.name }}
+        {% if not sub.enabled %}
+        <span class="pill pill-mute">已停用</span>
+        {% elif not sub.last_success_at and not sub.last_failure_at %}
+        <span class="pill pill-mute">未测试</span>
+        {% elif sub.online %}
+        <span class="pill pill-ok">正常</span>
+        {% else %}
+        <span class="pill pill-bad">源地址异常</span>
+        {% endif %}
+      </div>
+      <div class="sub-id mono">ID {{ sub.id }}</div>
+    </div>
+
+    <div class="sub-row">
+      <span class="sub-label">原始订阅</span>
+      <span class="sub-value mono source-masked">{{ sub.source_url_masked }}</span>
+      <button type="button" class="link-btn" onclick="toggleSource(this)">显示</button>
+      <button type="button" class="link-btn" onclick="copySource(this)">复制</button>
+    </div>
+    <div class="sub-row">
+      <span class="sub-label">中转地址</span>
+      <span class="sub-value mono relay-url">{{ sub.relay_url }}</span>
+      <button type="button" class="link-btn" onclick="copyRelay(this)">复制</button>
+    </div>
+
+    <div class="sub-meta">
+      <span>最后成功：{{ sub.last_success_at or '—' }}</span>
+      <span>最后失败：{{ sub.last_failure_at or '—' }}</span>
+      <span>缓存：{{ sub.cache_state }}
+        {%- if sub.cache_size is not none %}（{{ (sub.cache_size / 1024) | round(1) }} KB）{% endif %}
+      </span>
+      {% if sub.last_error %}<span class="meta-error">错误：{{ sub.last_error }}</span>{% endif %}
+    </div>
+
+    <div class="sub-actions">
+      <button type="button" class="btn btn-primary btn-sm" onclick="copyRelay(this)">复制地址</button>
+      <button type="button" class="btn btn-soft btn-sm" onclick="testSub(this)">测试</button>
+      <button type="button" class="btn btn-soft btn-sm" onclick="refreshSub(this)">刷新缓存</button>
+      <a href="/admin/subscriptions/{{ sub.id }}/edit" class="btn btn-soft btn-sm">编辑</a>
+      <button type="button" class="btn btn-text-danger btn-sm" onclick="deleteSub(this)">删除</button>
+      <button type="button" class="btn btn-text btn-sm" data-bs-toggle="collapse"
+              data-bs-target="#more-{{ sub.id }}">更多 ▾</button>
+    </div>
+
+    <div class="collapse more-panel" id="more-{{ sub.id }}">
+      <button type="button" class="btn btn-soft btn-sm" onclick="copyCurl(this)">复制 curl</button>
+      <button type="button" class="btn btn-soft btn-sm" onclick="copyWget(this)">复制 wget</button>
+      <button type="button" class="btn btn-soft btn-sm" onclick="openSub(this)">浏览器打开</button>
+      <button type="button" class="btn btn-text-orange btn-sm" onclick="regenToken(this)">重新生成 Token</button>
+    </div>
+  </div>
+  {% endfor %}
+
+  <p class="text-center small mt-4" style="color: var(--sr-secondary)">Subscription Relay v{{ version }}</p>
+</div>
+{% endblock %}

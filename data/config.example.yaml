@@ -1,0 +1,37 @@
+server:
+  # 对外访问的基础地址，用于拼接待复制的中转地址；留空则根据请求自动推断
+  public_base_url: ''
+
+  admin_username: 'admin'
+  # 明文密码，优先于 admin_password_hash；启动时在内存中计算 bcrypt 哈希用于登录，
+  # 不会回写本文件。生产环境可删掉此字段、改用 admin_password_hash。
+  admin_password: 'admin'
+  admin_password_hash: ''
+
+  # 会话签名密钥；首次启动为空时自动生成并写回本文件
+  session_secret: ''
+
+  session_max_age: 604800
+
+  # 仅用于本地调试：允许中转目标是内网/保留地址（有 SSRF 风险，生产环境保持 false）
+  allow_private_networks: false
+
+defaults:
+  cache_ttl: 1800
+  connect_timeout: 5.0
+  read_timeout: 15.0
+  max_response_size: 5242880
+  user_agent_mode: 'passthrough'
+  user_agent: 'SubscriptionRelay/0.1.0'
+
+# 订阅列表，示例：
+# subscriptions:
+#   - id: 'airport_a'
+#     name: '机场 A'
+#     enabled: true
+#     source_url: 'https://provider-a.example.com/api/subscribe?token=xxxxx'
+#     access_token: '8LxK2pqN7MWa'
+#     cache_ttl: 1800
+#     user_agent_mode: 'fixed'
+#     user_agent: 'clash'
+subscriptions: []

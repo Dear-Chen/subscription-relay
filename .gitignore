@@ -1,0 +1,30 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# ---- 虚拟环境 ----
+.venv/
+venv/
+env/
+
+# ---- IDE / 编辑器 ----
+.idea/
+.vscode/
+*.iml
+
+# ---- 操作系统 ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 运行时数据（含密钥，勿提交）----
+data/config.yaml
+data/state.yaml
+data/cache/*
+!data/cache/.gitkeep
